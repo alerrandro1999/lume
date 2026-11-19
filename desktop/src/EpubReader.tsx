@@ -59,7 +59,12 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(resizing.current);
       resizing.current = requestAnimationFrame(() => {
-        if (current.current && root.current?.clientWidth && root.current.clientHeight) current.current.rendition.resize(root.current.clientWidth, root.current.clientHeight);
+        if (current.current && root.current?.clientWidth && root.current.clientHeight) {
+          const context = current.current;
+          // epub.js accepts a CFI here although its bundled typings omit it.
+          const resize = context.rendition.resize as (width: number, height: number, cfi?: string) => void;
+          resize.call(context.rendition, root.current.clientWidth, root.current.clientHeight, context.resumeAnchor);
+        }
       });
     });
     if (root.current) observer.observe(root.current);
