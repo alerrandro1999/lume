@@ -57,10 +57,23 @@ jobs:
           xcrun --find swiftc
       - name: Instalar dependências
         run: pnpm install --frozen-lockfile
+      - name: Recuperar componentes nativos da mesma revisão
+        id: native-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: desktop/resources/transcription/runtime
+          key: mac-native-${{ matrix.arch }}-${{ hashFiles('desktop/scripts/prepare-transcription-macos.mjs', 'desktop/scripts/transcription-models.mjs', 'desktop/electron/speech-macos.swift') }}
       - name: Compilar o hub e os componentes nativos
+        id: native-build
         run: pnpm run build
+      - name: Guardar componentes nativos verificados
+        if: steps.native-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: desktop/resources/transcription/runtime
+          key: ${{ steps.native-cache.outputs.cache-primary-key }}
       - name: Verificar seleção de plataforma e configuração
-        run: pnpm test -- tests/platform-core.spec.ts
+        run: pnpm exec playwright test tests/platform-core.spec.ts tests/epub.spec.ts tests/portfolio.spec.ts tests/workspace.spec.ts tests/updates.spec.ts
       - name: Gerar prévia
         if: inputs.distribution == 'preview'
         run: pnpm run package:mac

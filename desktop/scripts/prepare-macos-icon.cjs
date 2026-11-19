@@ -2,7 +2,9 @@ const { app, BrowserWindow } = require('electron');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-app.setPath('userData', path.join(root, '.lume-test-data/mac-branding/profile'));
+const profile = path.join(root, '.lume-test-data/mac-branding/profile');
+require('node:fs').mkdirSync(profile, { recursive: true });
+app.setPath('userData', profile);
 app.whenReady().then(async () => {
   const destination = path.join(root,'.lume-test-data/mac-branding'); await fs.mkdir(destination,{recursive:true});
   const svg = await fs.readFile(path.join(root,'resources/branding/lume.svg'),'utf8');

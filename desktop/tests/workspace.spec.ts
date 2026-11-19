@@ -63,7 +63,7 @@ test('player flutuante controla a mesma reprodução com a janela principal em s
   await expect.poll(audioPosition).toBeGreaterThan(minimizedPosition + 1);
 
   await readerWindow.evaluate(reader => { reader.restore(); reader.close(); });
-  expect(await readerWindow.evaluate(reader => reader.isVisible())).toBe(false);
+  await expect.poll(() => readerWindow.evaluate(reader => reader.isVisible())).toBe(false);
   const positionBeforeSkip = await audioPosition();
   await floating.getByRole('button', { name: 'Avançar 15 segundos' }).click();
   await expect.poll(audioPosition).toBeGreaterThanOrEqual(positionBeforeSkip + 15);

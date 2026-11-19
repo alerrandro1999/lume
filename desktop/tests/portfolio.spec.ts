@@ -11,7 +11,7 @@ async function launch(profile: string) {
   delete env.ELECTRON_RUN_AS_NODE; delete env.LUME_DEV_URL;
   const executablePath = process.env.LUME_PORTFOLIO_TEST_EXECUTABLE;
   const app = await _electron.launch({ ...(executablePath ? { executablePath } : { args: ['.'] }), env });
-  const page = await app.firstWindow(); await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.setBackgroundThrottling(false));
+  const page = await app.firstWindow(); await app.evaluate(({ BrowserWindow }) => {const window=BrowserWindow.getAllWindows()[0];window.webContents.setBackgroundThrottling(false);if(process.platform==='darwin')window.show();});
   await page.getByRole('button', { name: 'Abrir Portfólio Acadêmico e de Estágio', exact: true }).click();
   await expect(page.locator('.portfolio-person')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Novo registro', exact: true })).toBeEnabled();
@@ -37,7 +37,7 @@ test('monta a trajetória, registra estágio, guarda comprovantes e exporta some
       if (kind === 'education') await form.getByLabel('Descrição e responsabilidades', { exact: true }).fill(Array.from({ length: 6 }, () => 'A formação reúne estudos sobre aprendizagem, planejamento e práticas de leitura. As atividades incluem análise de textos, produção de materiais e discussão de projetos em equipe.').join('\n\n'));
       if (kind === 'experience') await form.getByLabel('Resultados e aprendizados', { exact: true }).fill(Array.from({ length: 8 }, () => 'Durante a experiência, desenvolvi a organização do trabalho e a comunicação com a equipe. Registrei as atividades realizadas e revisei os materiais a partir das orientações recebidas.').join('\n\n'));
       if (kind === 'experience') await form.getByLabel('Meta de horas (opcional)', { exact: true }).fill('120');
-      await form.getByRole('button', { name: 'Salvar registro', exact: true }).click(); await expect(form).toHaveCount(0);
+      await form.getByRole('button', { name: 'Salvar registro', exact: true }).click(); await expect(form).toHaveCount(0).catch(async error => { const details=await form.evaluate(node=>({alerts:Array.from(node.querySelectorAll('[role=alert]')).map(n=>n.textContent),invalid:Array.from(node.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>('input,textarea,select')).filter(n=>!n.validity.valid).map(n=>({type:n.type,value:n.value,message:n.validationMessage}))}));throw new Error('Registro não salvo: '+JSON.stringify(details),{cause:error}); });
     }
     await entry('education', 'Licenciatura em Pedagogia'); await entry('experience', 'Estágio pedagógico'); await entry('project', 'PROJETO_RESERVADO_NAO_PUBLICAR');
     await tab(page, 'Minha trajetória'); await page.getByLabel('Incluir PROJETO_RESERVADO_NAO_PUBLICAR na apresentação', { exact: true }).uncheck(); await expect(page.locator('.portfolio-toast')).toContainText('fora da apresentação');

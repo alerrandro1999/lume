@@ -25,7 +25,7 @@ async function launch() {
   app = await _electron.launch({ args: ['.'], env });
   window = await app.firstWindow();
   await window.getByRole('button', { name: 'Abrir Lume Leitor' }).click();
-  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.setBackgroundThrottling(false));
+  await app.evaluate(({ BrowserWindow }) => {const view=BrowserWindow.getAllWindows()[0];view.webContents.setBackgroundThrottling(false);if(process.platform==='darwin')view.show();});
   window.on('pageerror', error => errors.push(error.message));
   await expect(window.getByRole('heading', { name: /Sua próxima página/ })).toBeVisible();
 }
@@ -126,12 +126,11 @@ test('sumário, busca e marcadores navegam no EPUB', async () => {
 });
 
 test('seleciona e destaca texto no EPUB com âncora estável', async () => {
-  await frame().locator('p').first().evaluate(element => {
+  await expect(async () => { await frame().locator('p').first().evaluate(element => {
     const range = element.ownerDocument.createRange(); range.setStart(element.firstChild!, 0); range.setEnd(element.lastChild!, element.lastChild!.textContent!.length);
     const selection = element.ownerDocument.defaultView!.getSelection()!; selection.removeAllRanges(); selection.addRange(range);
     element.ownerDocument.dispatchEvent(new Event('selectionchange'));
-  });
-  await expect(window.getByRole('toolbar', { name: 'Ações do texto selecionado' })).toBeVisible();
+  }); await expect(window.getByRole('toolbar', { name: 'Ações do texto selecionado' })).toBeVisible(); }).toPass({timeout:15000});
   await window.getByRole('button', { name: 'Anotar', exact: true }).click();
   await window.getByLabel('Sua anotação', { exact: true }).fill('Esta passagem merece uma nova leitura.');
   await window.getByRole('button', { name: 'Salvar anotação' }).click();
