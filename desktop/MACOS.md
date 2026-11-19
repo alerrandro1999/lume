@@ -1,6 +1,8 @@
 # Versão do Lume para Mac
 
-A preparação para gerar DMG e ZIP está implementada, mas a versão de Mac ainda precisa ser compilada e passar pela verificação em um runner macOS. A rotina local de Windows não produz um instalador de Mac validado.
+Os instaladores de teste 0.8.4 em DMG e ZIP foram gerados para chip Apple e Intel pelo GitHub Actions e passaram pela validação automatizada em macOS em 19/11/2026. Os arquivos baixados ficam em `desktop/release/macos/`.
+
+A [execução validada](https://github.com/alerrandro1999/lume/actions/runs/44631112096) usa a revisão `7df37bfbd196144de2fcfbd40141978d93382edf`. Nas duas arquiteturas, foram verificados os fluxos do leitor e do portfólio e o aplicativo empacotado: assinatura local, nove apps, importação de PDF, voz nativa, conversão M4A, transcrição real e salvamento. Instalação pelo usuário e gravação do microfone ainda precisam ser testadas em um Mac físico.
 
 ## Geração sem possuir um Mac
 

@@ -4,7 +4,7 @@ Aplicativo desktop em Electron, React e TypeScript. PDF.js renderiza PDFs e epub
 
 ## Usar no Windows
 
-A preparação de uma edição macOS por GitHub Actions está descrita em [MACOS.md](MACOS.md). Os pacotes de Mac ainda precisam ser gerados e validados no runner macOS.
+Os instaladores de teste macOS 0.8.4 para chip Apple e Intel foram gerados e validados pelo GitHub Actions. Consulte [MACOS.md](MACOS.md) para os requisitos, a geração e as etapas restantes de assinatura e distribuição.
 
 O instalador atual, com os nove aplicativos do hub, é `release/installers/Lume-Setup-0.8.4-x64.exe`. Esse é o arquivo para distribuir a outros computadores.
 
