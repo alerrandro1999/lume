@@ -25,6 +25,7 @@ interface Context {
   sections: Section[]; outline: OutlineItem[]; location: EpubLocation | null;
   texts: Map<number, PageText>; marks: string[]; suppress: boolean;
   searchMark?: string;
+  resumeAnchor?: string;
 }
 
 const paragraphElements = (doc: Document) => {
@@ -58,7 +59,7 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(resizing.current);
       resizing.current = requestAnimationFrame(() => {
-        if (current.current && root.current?.clientWidth && root.current.clientHeight) current.current.rendition.resize(root.current.clientWidth, root.current.clientHeight);
+        if (current.current && root.current?.clientWidth && root.current.clientHeight) {const context=current.current;context.resumeAnchor=context.location?.cfi||context.resumeAnchor;context.rendition.resize(root.current.clientWidth, root.current.clientHeight);}
       });
     });
     if (root.current) observer.observe(root.current);
@@ -149,12 +150,14 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
   }, [props.spoken?.paragraph, props.spoken?.page]);
 
   function location(context: Context, value: Location): EpubLocation {
+    let cfi=value.start.cfi;
+    if(context.resumeAnchor){try{const compare=new EpubCFI();if(compare.compare(value.start.cfi,context.resumeAnchor)<=0&&compare.compare(context.resumeAnchor,value.end.cfi)<=0)cfi=context.resumeAnchor;else if(!context.suppress)context.resumeAnchor=undefined;}catch{context.resumeAnchor=undefined;}}
     const chapter = Math.max(0, context.sections.findIndex(section => section.index === value.start.index)) + 1;
     const section = context.sections[chapter - 1];
     const title = context.outline.find(item => typeof item.destination === 'string' && item.destination.split('#')[0] === section?.href)?.title || `Seção ${chapter}`;
-    const mapped = context.book.locations.length() > 1 ? context.book.locations.percentageFromCfi(value.start.cfi) : (chapter - 1) / Math.max(1, context.sections.length);
+    const mapped = context.book.locations.length() > 1 ? context.book.locations.percentageFromCfi(cfi) : (chapter - 1) / Math.max(1, context.sections.length);
     const displayedPage = Math.max(1, value.start.displayed?.page || 1);
-    return { cfi: value.start.cfi, chapter, chapters: context.sections.length, title, progress: value.atEnd ? 1 : Math.min(0.999, Math.max(0, Number.isFinite(mapped) ? mapped : 0)), displayedPage, displayedTotal: Math.max(displayedPage, value.start.displayed?.total || 1), atStart: value.atStart === true, atEnd: value.atEnd === true };
+    return { cfi, chapter, chapters: context.sections.length, title, progress: value.atEnd ? 1 : Math.min(0.999, Math.max(0, Number.isFinite(mapped) ? mapped : 0)), displayedPage, displayedTotal: Math.max(displayedPage, value.start.displayed?.total || 1), atStart: value.atStart === true, atEnd: value.atEnd === true };
   }
 
   async function text(context: Context, number: number): Promise<PageText> {
@@ -221,7 +224,7 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
         if (ticket !== generation.current) throw new Error('Abertura cancelada.');
         const mount = document.createElement('div'); mount.className = 'epub-mount'; mount.style.visibility = 'hidden'; root.current!.append(mount);
         const rendition = book.renderTo(mount, { width: '100%', height: '100%', flow: latest.current.mode === 'scroll' ? 'scrolled-doc' : 'paginated', spread: latest.current.mode === 'book' ? 'always' : 'none', minSpreadWidth: 0, allowScriptedContent: false });
-        context = { id: source.entry.id, book, rendition, mount, sections, outline, location: null, texts: new Map(), marks: [], suppress: true };
+        context = { id: source.entry.id, book, rendition, mount, sections, outline, location: null, texts: new Map(), marks: [], suppress: true, resumeAnchor:source.entry.epubLocation?.cfi };
         const candidate = context;
         applyComfort(candidate);
         rendition.hooks.content.register((content: Contents) => {
@@ -279,16 +282,17 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     },
     close() { generation.current++; pending.current = null; destroy(current.current); current.current = null; },
     cancelLoading() { generation.current++; },
-    page(number) { const context = current.current; if (context) void context.rendition.display(context.sections[Math.max(0, Math.min(number - 1, context.sections.length - 1))].href).catch(error => latest.current.onRenderError(String(error))); },
-    turn(direction) { const context = current.current; if (context) void (direction === 1 ? context.rendition.next() : context.rendition.prev()).catch(() => {}); },
+    page(number) { const context = current.current; if (context) {context.resumeAnchor=undefined;void context.rendition.display(context.sections[Math.max(0, Math.min(number - 1, context.sections.length - 1))].href).catch(error => latest.current.onRenderError(String(error)));} },
+    turn(direction) { const context = current.current; if (context) {context.resumeAnchor=undefined;void (direction === 1 ? context.rendition.next() : context.rendition.prev()).catch(() => {});} },
     zoom() {}, scale() {}, rotate() {}, find() {}, clearFind() {},
-    destination(value) { if (typeof value === 'string' && current.current) void current.current.rendition.display(value).catch(() => latest.current.onRenderError('Não foi possível encontrar este trecho do EPUB.')); },
+    destination(value) { if (typeof value === 'string' && current.current) {current.current.resumeAnchor=undefined;void current.current.rendition.display(value).catch(() => latest.current.onRenderError('Não foi possível encontrar este trecho do EPUB.'));} },
     text(number) { if (!current.current) return Promise.reject(new Error('Abra um EPUB para ler seu texto.')); return text(current.current, number); },
     image() { return Promise.reject(new Error('O reconhecimento de imagens está disponível para PDFs.')); },
     location: () => current.current?.location || null,
     goToProgress(progress) {
       const context = current.current;
       if (!context) return;
+      context.resumeAnchor=undefined;
       void (async () => {
         let target = context.book.locations.cfiFromPercentage(Math.max(0, Math.min(progress, 1)));
         if (progress >= 1) {

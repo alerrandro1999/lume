@@ -737,6 +737,9 @@ function createWindow() {
     },
   });
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  const keepReaderHidden=()=>{if(readerHiddenForPlayer&&mainWindow&&!mainWindow.isDestroyed()&&!quitting)mainWindow.hide();};
+  mainWindow.on('restore',keepReaderHidden);
+  mainWindow.on('show',keepReaderHidden);
   let closingForAudio = false;
   mainWindow.on('close', event => {
     try { writing?.flushAll(); } catch { event.preventDefault(); dialog.showErrorBox('Há um texto não salvo', 'Não foi possível gravar a Oficina de Escrita. Mantenha o Lume aberto, confira o espaço no disco e use Tentar salvar novamente na oficina.'); return; }
