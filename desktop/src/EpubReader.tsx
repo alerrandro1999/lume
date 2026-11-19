@@ -92,6 +92,7 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     const context = current.current;
     if (!context) return;
     const cfi = context.location?.cfi;
+    context.resumeAnchor = cfi;
     configure(context);
     if (cfi) void context.rendition.display(cfi).catch(() => {});
   }, [props.mode]);
@@ -99,6 +100,7 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     const context = current.current;
     if (!context) return;
     const cfi = context.location?.cfi;
+    context.resumeAnchor = cfi;
     applyComfort(context);
     if (cfi) void context.rendition.display(cfi).catch(() => {});
   }, [props.comfort.size, props.comfort.font, props.comfort.lineHeight, props.comfort.paper, props.comfort.width]);
@@ -126,6 +128,7 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     if (match) void api.current?.selectionCfi?.({ page: match.page, quote: '', anchors: [], textAnchors: [{ paragraph: match.paragraph, start: match.start, end: match.end }] }).then(cfi => {
       if (canceled || current.current !== context || !cfi) return;
       context.searchMark = cfi;
+      context.resumeAnchor = collapsed(cfi);
       return context.rendition.display(collapsed(cfi)).then(() => { if (!canceled) applyMarks(context); });
     }).catch(() => {});
     return () => { canceled = true; };
@@ -144,14 +147,18 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     const spoken = props.spoken;
     if (!spoken) return;
     const paragraph = context.texts.get(spoken.page)?.paragraphs.find(item => item.id === spoken.paragraph);
-    if (paragraph?.cfi && latest.current.mode !== 'text') void context.rendition.display(collapsed(paragraph.cfi)).then(() => {
-      if (current.current === context) applySpoken(context);
-    }).catch(() => {});
+    if (paragraph?.cfi && latest.current.mode !== 'text') {
+      context.resumeAnchor = collapsed(paragraph.cfi);
+      void context.rendition.display(context.resumeAnchor).then(() => {
+        if (current.current === context) applySpoken(context);
+      }).catch(() => {});
+    }
   }, [props.spoken?.paragraph, props.spoken?.page]);
 
   function location(context: Context, value: Location): EpubLocation {
-    let cfi=value.start.cfi;
-    if(context.resumeAnchor){try{const compare=new EpubCFI();if(compare.compare(value.start.cfi,context.resumeAnchor)<=0&&compare.compare(context.resumeAnchor,value.end.cfi)<=0)cfi=context.resumeAnchor;else if(!context.suppress)context.resumeAnchor=undefined;}catch{context.resumeAnchor=undefined;}}
+    // Reflow can move the page boundary before the saved character. Keep the
+    // logical reading point until the reader explicitly navigates elsewhere.
+    const cfi = context.resumeAnchor || value.start.cfi;
     const chapter = Math.max(0, context.sections.findIndex(section => section.index === value.start.index)) + 1;
     const section = context.sections[chapter - 1];
     const title = context.outline.find(item => typeof item.destination === 'string' && item.destination.split('#')[0] === section?.href)?.title || `Seção ${chapter}`;
@@ -233,6 +240,7 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
           for (const event of ['pointerdown', 'pointermove', 'keydown', 'wheel']) content.document.addEventListener(event, activity, { passive: true });
           content.document.addEventListener('click', event => {
             const link = (event.target as Element).closest?.('a');
+            if (link) candidate.resumeAnchor = undefined;
             if (link && /^(https?:|javascript:|mailto:|file:)/i.test(link.getAttribute('href') || '')) event.preventDefault();
           }, true);
           content.document.addEventListener('keydown', event => {
