@@ -59,7 +59,7 @@ export const EpubReader = forwardRef<ReaderHandle, Props>(function EpubReader(pr
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(resizing.current);
       resizing.current = requestAnimationFrame(() => {
-        if (current.current && root.current?.clientWidth && root.current.clientHeight) {const context=current.current;context.resumeAnchor=context.location?.cfi||context.resumeAnchor;context.rendition.resize(root.current.clientWidth, root.current.clientHeight);}
+        if (current.current && root.current?.clientWidth && root.current.clientHeight) current.current.rendition.resize(root.current.clientWidth, root.current.clientHeight);
       });
     });
     if (root.current) observer.observe(root.current);

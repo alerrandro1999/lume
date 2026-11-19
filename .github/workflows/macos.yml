@@ -100,3 +100,11 @@ jobs:
             desktop/release/macos/*.sha256
           if-no-files-found: error
           retention-days: 14
+      - name: Guardar diagnóstico em caso de falha
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-test-diagnostics-${{ matrix.arch }}
+          path: desktop/test-results/
+          if-no-files-found: ignore
+          retention-days: 3

@@ -52,7 +52,13 @@ test('monta a trajetória, registra estágio, guarda comprovantes e exporta some
     await tab(page, 'Competências'); await page.getByRole('button', { name: 'Nova competência', exact: true }).click(); modal = page.getByRole('dialog', { name: 'Nova competência' });
     await modal.getByLabel('Nome da competência', { exact: true }).fill('Planejamento de atividades'); await modal.getByLabel('Autoavaliação', { exact: true }).selectOption('practicing'); await modal.getByRole('button', { name: 'Salvar competência', exact: true }).click(); await expect(modal).toHaveCount(0);
     await tab(page, 'Prévia e exportação'); await page.getByRole('checkbox', { name: 'Incluir contatos', exact: true }).uncheck(); await expect(page.locator('.portfolio-toast')).toContainText('contatos');
-    await expect(page.frameLocator('iframe[title="Prévia do portfólio"]').getByRole('heading', { name: 'Ana Silva', exact: true })).toBeVisible();
+    try {
+      await expect(page.frameLocator('iframe[title="Prévia do portfólio"]').getByRole('heading', { name: 'Ana Silva', exact: true })).toBeVisible();
+    } catch (error) {
+      const frames = await Promise.all(page.frames().map(async frame => ({ url: frame.url(), content: await frame.content().catch(() => 'Frame indisponível') })));
+      await info.attach('portfolio-preview-frames', { body: JSON.stringify(frames, null, 2), contentType: 'application/json' });
+      throw error;
+    }
     await expect(page.frameLocator('iframe[title="Prévia do portfólio"]').locator('body')).not.toContainText('PROJETO_RESERVADO');
     const pdfFile = info.outputPath('portfolio-academico.pdf');
     await app.evaluate(({ dialog }, filePath) => { dialog.showSaveDialog = (async () => ({ canceled: false, filePath })) as typeof dialog.showSaveDialog; }, pdfFile);
