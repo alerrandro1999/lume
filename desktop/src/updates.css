@@ -1,0 +1,15 @@
+.tool-modal:has(.updates-content) { width:560px; max-height:calc(100vh - 48px); display:flex; flex-direction:column; }
+.updates-content { overflow:auto; min-height:0; padding:5px 3px 4px 0; }
+.update-version { font-weight:600; margin:12px 0; }
+.update-message { line-height:1.6; margin:12px 0; font-size:13px; }
+.update-error { color:var(--danger,#ac473f); }
+.update-available { color:var(--accent); }
+.updates-content .study-actions button { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+.update-option { display:flex; align-items:center; gap:9px; margin:23px 0; font-size:12px; }
+.tool-modal .update-option input { width:15px; height:15px; margin:0; accent-color:var(--accent); }
+.update-checked { color:var(--muted); line-height:1.8; font-size:11px; }
+.update-download { display:grid; gap:8px; font-size:11px; color:var(--muted); margin:20px 0; }
+.update-download progress { width:100%; accent-color:var(--accent); }
+.sidebar-footer button.version { background:none; padding:3px; font-size:9px; color:var(--accent); opacity:1; }
+.update-badge { position:relative; }
+.update-badge::after { content:''; position:absolute; top:4px; right:4px; width:6px; height:6px; border-radius:50%; background:var(--accent); }

@@ -1,0 +1,179 @@
+.presentation-workspace { --presentation-accent: #8b4f3b; --presentation-muted: #786f66; --presentation-soft: #f3e8dc; height: 100%; color: var(--ink); background: var(--background); }
+:root[data-theme='dark'] .presentation-workspace { --presentation-accent: #e3b498; --presentation-muted: #bab0a3; --presentation-soft: #41332b; }
+.presentation-mark { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 13px; background: #91553f; color: #f9e4cc; }
+.presentation-shell { display: flex; flex-direction: column; height: 100%; }
+.presentation-header { display: flex; align-items: center; gap: 22px; min-height: 64px; padding: 0 24px; border-bottom: 1px solid var(--line); }
+.presentation-header > span { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 650; }
+.presentation-header > span svg { color: var(--presentation-accent); }
+.presentation-header > .icon-button { margin-left: auto; }
+.presentation-layout { display: grid; grid-template-columns: clamp(205px, 21vw, 265px) minmax(0, 1fr); flex: 1; min-height: 0; }
+.presentation-sidebar { display: flex; flex-direction: column; padding: 22px 15px; border-right: 1px solid var(--line); background: var(--sidebar); overflow: auto; }
+.presentation-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: var(--background); font-size: 12px; font-weight: 600; }
+.presentation-button:hover:not(:disabled) { background: var(--selected); }
+.presentation-button.presentation-primary { color: #fff6ed; background: #8b4f3b; border-color: #8b4f3b; }
+.presentation-button.presentation-primary:hover:not(:disabled) { background: #a26047; }
+.presentation-button.presentation-danger { color: var(--error-ink); }
+.presentation-sidebar > .presentation-button { width: 100%; justify-content: flex-start; }
+.presentation-sidebar > h2 { display: flex; justify-content: space-between; margin: 26px 7px 12px; font-size: 12px; font-weight: 600; }
+.presentation-sidebar > h2 span { color: var(--presentation-muted); }
+.presentation-sidebar ul { margin: 0 0 25px; padding: 0; list-style: none; }
+.presentation-project { display: grid; gap: 6px; width: 100%; margin-bottom: 5px; padding: 12px 10px; border-radius: 8px; color: var(--ink); background: transparent; text-align: left; }
+.presentation-project[aria-pressed='true'] { background: var(--presentation-soft); }
+.presentation-project:hover:not(:disabled) { background: var(--selected); }
+.presentation-project > span { font-size: 13px; line-height: 1.35; font-weight: 600; overflow-wrap: anywhere; }
+.presentation-project small { color: var(--presentation-muted); font-size: 10px; line-height: 1.5; overflow-wrap: anywhere; }
+.presentation-sidebar-tip { margin: auto 7px 0; padding-top: 22px; border-top: 1px solid var(--line); color: var(--presentation-accent); }
+.presentation-sidebar-tip p { margin: 9px 0 6px; font-size: 12px; font-weight: 600; }
+.presentation-sidebar-tip > span { display: block; color: var(--presentation-muted); font-size: 11px; line-height: 1.65; }
+.presentation-main { min-width: 0; overflow: auto; padding: 15px clamp(20px, 3vw, 48px) 35px; }
+.presentation-status { min-height: 16px; margin: 0 0 12px; color: var(--presentation-accent); font-size: 12px; }
+.presentation-title { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 25px; }
+.presentation-title > div { min-width: 0; }
+.presentation-title p { margin: 0 0 7px; color: var(--presentation-accent); font-size: 11px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; }
+.presentation-title h1 { margin: 0; font-size: clamp(25px, 2.7vw, 38px); font-weight: 600; line-height: 1.15; letter-spacing: -.045em; overflow-wrap: anywhere; }
+.presentation-title > div > span { display: block; margin-top: 9px; color: var(--presentation-muted); font-size: 12px; }
+.presentation-title > button { flex: none; }
+.presentation-tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line); margin-bottom: 24px; }
+.presentation-tabs button { display: flex; align-items: center; gap: 7px; padding: 0 0 13px; border-bottom: 2px solid transparent; border-radius: 0; color: var(--presentation-muted); background: transparent; font-size: 12px; }
+.presentation-tabs button[aria-pressed='true'] { color: var(--presentation-accent); border-bottom-color: var(--presentation-accent); font-weight: 650; }
+.presentation-tabs button > span { padding: 1px 5px; border-radius: 4px; font-size: 10px; background: var(--selected); }
+.presentation-empty { display: grid; justify-items: center; max-width: 540px; margin: clamp(45px, 10vh, 110px) auto; text-align: center; }
+.presentation-empty > span { display: grid; place-items: center; width: 86px; height: 86px; border-radius: 25px; background: var(--presentation-soft); color: var(--presentation-accent); transform: rotate(-5deg); }
+.presentation-empty > p { margin: 30px 0 13px; color: var(--presentation-accent); font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .1em; }
+.presentation-empty h1 { max-width: 450px; margin: 0; font-weight: 550; font-size: clamp(29px, 3.5vw, 44px); letter-spacing: -.05em; line-height: 1.08; }
+.presentation-empty > div { max-width: 390px; margin: 19px 0 24px; color: var(--presentation-muted); font-size: 13px; line-height: 1.8; }
+.presentation-empty > .presentation-button { min-height: 42px; padding: 10px 18px; }
+.presentation-empty > small { margin-top: 15px; color: var(--presentation-muted); font-size: 11px; }
+.presentation-setup { display: grid; grid-template-columns: minmax(0, 1fr) 245px; align-items: start; gap: 24px; }
+.presentation-script, .presentation-start, .presentation-current { border: 1px solid var(--line); border-radius: 12px; }
+.presentation-outline-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.presentation-outline-heading h2, .presentation-outline-heading h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.presentation-outline-heading > span { display: flex; align-items: center; gap: 5px; color: var(--presentation-muted); font-size: 11px; white-space: nowrap; }
+.presentation-script > .presentation-outline-heading { padding: 20px; border-bottom: 1px solid var(--line); }
+.presentation-script > ol { margin: 0; padding: 0; list-style: none; }
+.presentation-script li { display: flex; align-items: start; gap: 12px; padding: 21px 20px; }
+.presentation-script li + li { border-top: 1px solid var(--line); }
+.presentation-step-number { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; color: var(--presentation-accent); background: var(--presentation-soft); font-size: 11px; }
+.presentation-script li > div { flex: 1; min-width: 0; }
+.presentation-script li h3 { margin: 4px 0 8px; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.presentation-script li p { margin: 0; color: var(--presentation-muted); font-size: 12px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.presentation-script li > small { padding-top: 5px; color: var(--presentation-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.presentation-start { padding: 22px; background: var(--sidebar); }
+.presentation-start-icon { display: grid; place-items: center; width: 45px; height: 45px; border-radius: 13px; background: var(--presentation-soft); color: var(--presentation-accent); }
+.presentation-start h2 { margin: 17px 0 10px; font-size: 20px; font-weight: 600; letter-spacing: -.035em; }
+.presentation-start p { color: var(--presentation-muted); font-size: 12px; line-height: 1.7; }
+.presentation-audio-option { display: flex; align-items: center; gap: 7px; margin: 22px 0 10px; font-size: 11px; font-weight: 650; }
+.presentation-audio-option input { margin: 0; accent-color: #8b4f3b; }
+.presentation-start > small { display: block; min-height: 45px; color: var(--presentation-muted); font-size: 10px; line-height: 1.7; }
+.presentation-start > button { width: 100%; margin-top: 15px; }
+.presentation-start .presentation-start-count { display: flex; align-items: center; gap: 5px; margin: 16px 0 0; font-size: 10px; }
+.presentation-rehearsal { display: grid; grid-template-columns: minmax(240px, .8fr) minmax(0, 1.2fr); align-items: start; gap: 22px; }
+.presentation-clock { padding: 28px 20px 22px; border: 1px solid var(--line); border-radius: 13px; text-align: center; background: var(--sidebar); }
+.presentation-live { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 11px; font-weight: 650; color: var(--presentation-muted); }
+.presentation-live i { width: 6px; height: 6px; background: var(--presentation-muted); border-radius: 50%; }
+.presentation-live i.running { background: #ba5039; box-shadow: 0 0 0 4px #ba50391a; }
+.presentation-clock > strong { display: block; margin: 19px 0 8px; font-size: clamp(45px, 6vw, 78px); font-weight: 400; line-height: 1; letter-spacing: -.06em; font-variant-numeric: tabular-nums; }
+.presentation-clock > p { min-height: 30px; margin: 0; font-size: 11px; line-height: 1.6; color: var(--presentation-muted); }
+.presentation-clock > progress { width: 100%; height: 5px; margin: 10px 0 24px; accent-color: #8b4f3b; }
+.presentation-clock.is-overtime > strong, .presentation-overtime { color: var(--presentation-accent); }
+.presentation-clock-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.presentation-clock > small { display: block; margin-top: 18px; color: var(--presentation-muted); font-size: 10px; line-height: 1.6; }
+.presentation-current { padding: 23px; }
+.presentation-eyebrow { display: flex; justify-content: space-between; gap: 10px; color: var(--presentation-accent); font-size: 11px; font-weight: 600; }
+.presentation-eyebrow > span { color: var(--presentation-muted); font-variant-numeric: tabular-nums; }
+.presentation-current h2 { margin: 21px 0 15px; font-size: 25px; font-weight: 550; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.presentation-speaker-notes { min-height: 140px; color: var(--ink); font-size: 16px; line-height: 1.85; white-space: pre-wrap; overflow-wrap: anywhere; }
+.presentation-section-navigation { display: flex; justify-content: space-between; gap: 8px; margin-top: 24px; padding-top: 19px; border-top: 1px solid var(--line); }
+.presentation-section-list { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.presentation-section-list li { flex: 1; min-width: 150px; }
+.presentation-section-list button { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; gap: 5px 8px; width: 100%; height: 100%; padding: 13px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: transparent; text-align: left; }
+.presentation-section-list button[aria-current='step'] { border-color: var(--presentation-accent); background: var(--presentation-soft); }
+.presentation-section-list button > span { grid-row: span 2; color: var(--presentation-accent); font-size: 12px; }
+.presentation-section-list button > strong { font-size: 11px; font-weight: 600; overflow-wrap: anywhere; }
+.presentation-section-list button > small { grid-column: 2; color: var(--presentation-muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.presentation-history { display: grid; grid-template-columns: 155px minmax(0, 1fr); align-items: start; gap: 22px; }
+.presentation-take-list { display: grid; gap: 7px; }
+.presentation-take { display: grid; gap: 7px; width: 100%; padding: 13px 11px; text-align: left; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: transparent; }
+.presentation-take[aria-pressed='true'] { background: var(--presentation-soft); border-color: var(--presentation-accent); }
+.presentation-take strong { font-size: 12px; font-weight: 600; }
+.presentation-take > span, .presentation-take > small { color: var(--presentation-muted); font-size: 10px; line-height: 1.4; }
+.presentation-review { min-width: 0; }
+.presentation-review-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+.presentation-review-heading p { margin: 0 0 8px; color: var(--presentation-muted); font-size: 10px; }
+.presentation-review-heading h2 { margin: 0; font-size: 23px; font-weight: 550; letter-spacing: -.04em; }
+.presentation-badge { padding: 5px 8px; background: var(--presentation-soft); border-radius: 5px; font-size: 10px; color: var(--presentation-accent); }
+.presentation-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.presentation-summary > div { display: grid; gap: 12px; padding: 15px; border: 1px solid var(--line); border-radius: 8px; }
+.presentation-summary span { font-size: 10px; color: var(--presentation-muted); }
+.presentation-summary strong { font-size: 28px; line-height: 1; font-weight: 500; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.presentation-review h3 { margin: 0 0 12px; font-size: 14px; font-weight: 600; }
+.presentation-help { margin: 10px 0; font-size: 11px; color: var(--presentation-muted); line-height: 1.75; }
+.presentation-recording { margin: 24px 0; padding: 17px; border: 1px solid var(--line); border-radius: 8px; background: var(--sidebar); }
+.presentation-recording h3 { display: flex; align-items: center; gap: 7px; }
+.presentation-recording audio { display: block; width: 100%; height: 40px; }
+.presentation-timing { margin: 24px 0; }
+.presentation-timing table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.presentation-timing th { padding: 9px 7px; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 500; color: var(--presentation-muted); text-align: left; }
+.presentation-timing td { padding: 12px 7px; border-bottom: 1px solid var(--line); vertical-align: top; font-variant-numeric: tabular-nums; }
+.presentation-timing td:not(:first-child) { width: 75px; }
+.presentation-timing td strong { font-weight: 600; overflow-wrap: anywhere; }
+.presentation-timing td p { margin: 7px 0 0; color: var(--presentation-muted); line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.presentation-assessment { padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--sidebar); }
+.presentation-rating-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; margin: 18px 0; }
+.presentation-notes-input { display: grid; gap: 7px; }
+.presentation-assessment fieldset > textarea { margin-top: 7px; }
+.presentation-assessment label, .presentation-form label { display: grid; gap: 7px; font-size: 11px; font-weight: 600; }
+.presentation-assessment input, .presentation-assessment select, .presentation-assessment textarea, .presentation-form input, .presentation-form textarea { width: 100%; min-width: 0; padding: 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--background); color: var(--ink); font: inherit; font-size: 12px; font-weight: 400; line-height: 1.5; }
+.presentation-assessment textarea, .presentation-form textarea { resize: vertical; }
+.presentation-assessment > fieldset, .presentation-form > fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.presentation-assessment fieldset > button { margin-top: 13px; }
+.presentation-assessment-feedback:empty { display: none; }
+.presentation-assessment-success { display: flex; align-items: center; gap: 8px; margin: 13px 0 0; padding: 11px 13px; border: 1px solid #b9d1b6; border-radius: 7px; color: #315d35; background: #e9f3e5; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.presentation-assessment-success > svg { flex: none; }
+:root[data-theme='dark'] .presentation-assessment-success { color: #c2dfb6; background: #2b3c29; border-color: #4c6846; }
+.presentation-saving-icon { animation: presentation-saving 1s linear infinite; }
+@keyframes presentation-saving { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .presentation-saving-icon { animation: none; } }
+.presentation-export { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.presentation-export > .presentation-danger { margin-left: auto; }
+.presentation-empty-history { grid-column: 1 / -1; padding: 65px 20px; text-align: center; color: var(--presentation-muted); }
+.presentation-empty-history > svg { color: var(--presentation-accent); }
+.presentation-empty-history h2 { margin-top: 20px; font-size: 19px; font-weight: 600; color: var(--ink); }
+.presentation-empty-history p { margin: 12px 0 20px; font-size: 12px; }
+.presentation-error { padding: 12px; border: 1px solid var(--line); border-radius: 7px; color: var(--error-ink); background: var(--error-bg); font-size: 12px; line-height: 1.7; }
+.presentation-form { display: grid; gap: 16px; }
+.presentation-workspace .tool-modal { width: min(720px, calc(100vw - 60px)); max-height: calc(100vh - 60px); overflow: auto; padding: 24px; }
+.presentation-workspace .presentation-form label { display: grid; gap: 7px; margin: 0; }
+.presentation-workspace .presentation-form textarea { min-height: 70px; }
+.presentation-workspace textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.presentation-form > fieldset { display: grid; gap: 18px; }
+.presentation-form-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.presentation-section-inputs { display: grid; grid-template-columns: minmax(0, 1fr) 135px; gap: 12px; }
+.presentation-outline-form { display: grid; gap: 11px; }
+.presentation-outline-form > section { display: grid; gap: 11px; padding: 14px; border: 1px solid var(--line); border-radius: 8px; }
+.presentation-outline-controls { display: flex; justify-content: flex-end; gap: 6px; }
+.presentation-outline-controls > .icon-button { width: 28px; height: 26px; }
+.presentation-form-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.presentation-form-actions > .presentation-danger { margin-right: auto; }
+.presentation-confirm { padding: 14px; border: 1px solid var(--line); border-radius: 7px; font-size: 12px; line-height: 1.7; }
+.presentation-confirm p { margin: 0 0 12px; }
+.presentation-confirm > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+@media (max-width: 1080px) {
+  .presentation-setup { grid-template-columns: minmax(0, 1fr) 220px; gap: 16px; }
+  .presentation-start { padding: 17px; }
+  .presentation-rehearsal { gap: 16px; grid-template-columns: minmax(210px, .8fr) minmax(0, 1fr); }
+  .presentation-history { grid-template-columns: 125px minmax(0, 1fr); gap: 15px; }
+  .presentation-summary > div { padding: 12px; }
+  .presentation-summary strong { font-size: 24px; }
+}
+@media (max-width: 850px) {
+  .presentation-layout { grid-template-columns: 190px minmax(0, 1fr); }
+  .presentation-main { padding-right: 18px; padding-left: 18px; }
+  .presentation-setup, .presentation-rehearsal, .presentation-history { grid-template-columns: minmax(0, 1fr); }
+  .presentation-start { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .presentation-start-icon { display: none; }
+  .presentation-start h2, .presentation-start > p { grid-column: 1; margin-top: 0; }
+  .presentation-audio-option { grid-row: 1; grid-column: 2; margin: 0 0 10px; }
+  .presentation-start > small { grid-column: 2; grid-row: 2; }
+  .presentation-take-list { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+}

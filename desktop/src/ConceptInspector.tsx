@@ -1,0 +1,33 @@
+import { useEffect, useState } from 'react';
+import { ArrowLeftRight, BookOpen, ChevronRight, Lightbulb, Link2, Trash2, Unlink, X } from 'lucide-react';
+import { ConceptKindIcon } from './ConceptCanvas';
+import { conceptColors, conceptKinds, type ConceptColor, type ConceptEdge, type ConceptMap, type ConceptNode } from './concept-map-types';
+
+function ColorPicker({ value, change }: { value: ConceptColor; change(value: ConceptColor): void }) {
+  return <div className="concept-color-picker" role="group" aria-label="Cor do elemento">{Object.entries(conceptColors).map(([color, label]) => <button key={color} className={`concept-color-dot concept-color-${color}`} aria-label={`Cor ${label}`} aria-pressed={value === color} onClick={() => change(color as ConceptColor)}><span /></button>)}</div>;
+}
+export function ConceptNodeInspector({ node, update, remove, close, link, openSource, focus }: {
+  node: ConceptNode; update(value: Partial<ConceptNode>): void; remove(): void; close(): void;
+  link(): void; openSource(): void; focus(id: string): void;
+}) {
+  const [title, setTitle] = useState(node.title);
+  useEffect(() => setTitle(node.title), [node.title]);
+  return <aside className="concept-inspector" aria-label="Detalhes do bloco"><div className="concept-inspector-heading"><span><ConceptKindIcon kind={node.kind} />Detalhes do bloco</span><button className="concept-icon-button" aria-label="Fechar detalhes do bloco" onClick={close}><X size={16} /></button></div><div className="concept-inspector-body">
+    <label htmlFor="concept-node-title">Nome do bloco</label><input id="concept-node-title" maxLength={180} value={title} onChange={event => { const value = event.target.value; setTitle(value); if (value.trim()) update({ title: value }); }} onBlur={() => { if (!title.trim()) setTitle(node.title); }} />{!title.trim() && <p className="concept-field-help">Dê um nome ao bloco para salvar.</p>}
+    <label htmlFor="concept-node-kind">Tipo</label><select id="concept-node-kind" value={node.kind} onChange={event => update({ kind: event.target.value as ConceptNode['kind'] })}>{Object.entries(conceptKinds).map(([kind, label]) => <option key={kind} value={kind}>{label}</option>)}</select>
+    <label htmlFor="concept-node-notes">Notas e ideias</label><textarea id="concept-node-notes" rows={5} maxLength={6000} value={node.notes} onChange={event => update({ notes: event.target.value })} placeholder="Explique o conceito, escreva uma citação ou registre uma dúvida." />
+    <h3>Cor do bloco</h3><ColorPicker value={node.color} change={color => update({ color })} />
+    <section className="concept-source-link"><h3><Link2 size={14} />Material vinculado</h3>{node.source ? <><p>{node.source.title || (node.source.kind === 'book' ? 'Livro da biblioteca' : 'Referência da Bancada')}</p><button className="concept-button" onClick={openSource}><BookOpen size={14} />Abrir no hub<ChevronRight size={13} /></button><div><button onClick={link}>Trocar vínculo</button><button onClick={() => update({ source: null })}><Unlink size={12} />Desvincular</button></div></> : <><p>Relacione esta ideia a um livro ou referência que já está no hub.</p><button className="concept-button" onClick={link}><Link2 size={14} />Vincular material</button></>}</section>
+    <p className="concept-inspector-autosave">As alterações são salvas automaticamente.</p><div className="concept-inspector-bottom"><button className="concept-button" onClick={() => focus(node.id)}>Localizar no quadro</button><button className="concept-icon-button concept-danger" aria-label="Excluir bloco selecionado" onClick={remove}><Trash2 size={16} /></button></div>
+  </div></aside>;
+}
+export function ConceptEdgeInspector({ edge, map, update, remove, close, reverse }: { edge: ConceptEdge; map: ConceptMap; update(value: Partial<ConceptEdge>): void; remove(): void; close(): void; reverse(): void }) {
+  return <aside className="concept-inspector" aria-label="Detalhes da conexão"><div className="concept-inspector-heading"><span><Link2 size={15} />Detalhes da conexão</span><button className="concept-icon-button" aria-label="Fechar detalhes da conexão" onClick={close}><X size={16} /></button></div><div className="concept-inspector-body"><div className="concept-edge-endpoints"><span>{map.nodes.find(node => node.id === edge.from)?.title}</span><ChevronRight size={15} /><span>{map.nodes.find(node => node.id === edge.to)?.title}</span></div>
+    <label htmlFor="concept-edge-label">Nome da relação</label><input id="concept-edge-label" maxLength={100} value={edge.label} onChange={event => update({ label: event.target.value })} placeholder="Ex.: influencia, fundamenta, cita…" /><p className="concept-field-help">O texto aparece sobre a seta.</p>
+    <label htmlFor="concept-edge-style">Traço</label><select id="concept-edge-style" value={edge.style} onChange={event => update({ style: event.target.value as ConceptEdge['style'] })}><option value="solid">Contínuo</option><option value="dashed">Tracejado</option></select>
+    <h3>Cor da conexão</h3><ColorPicker value={edge.color} change={color => update({ color })} /><button className="concept-button" onClick={reverse}><ArrowLeftRight size={14} />Inverter direção da seta</button><p className="concept-inspector-autosave">As alterações são salvas automaticamente.</p><button className="concept-button concept-danger" onClick={remove}><Trash2 size={14} />Excluir conexão</button>
+  </div></aside>;
+}
+export function ConceptGuide({ map, select }: { map: ConceptMap; select(id: string): void }) {
+  return <aside className="concept-inspector concept-guide" aria-label="Guia do mapa"><div className="concept-guide-icon"><Lightbulb size={23} strokeWidth={1.5} /></div><p className="concept-eyebrow">Pense em conexões</p><h2>Dê forma ao que você sabe.</h2><p>Organize conceitos, relacione autores e mantenha as fontes por perto.</p><ol><li><span>1</span><div><strong>Crie ou arraste um bloco</strong><small>Ideias, livros, autores e referências.</small></div></li><li><span>2</span><div><strong>Ligue os pontos</strong><small>Arraste de um ponto do bloco até outro.</small></div></li><li><span>3</span><div><strong>Explique a relação</strong><small>Selecione a seta e escreva o vínculo.</small></div></li></ol>{map.nodes.length > 0 && <div className="concept-outline"><h3>Neste mapa <span>{map.nodes.length}</span></h3>{map.nodes.map(node => <button key={node.id} onClick={() => select(node.id)}><ConceptKindIcon kind={node.kind} size={13} /><span>{node.title}</span></button>)}</div>}<p className="concept-keyboard-help">Use a roda do mouse para zoom e arraste o fundo para navegar. Delete exclui; Ctrl+Z desfaz.</p></aside>;
+}

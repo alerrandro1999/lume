@@ -1,0 +1,74 @@
+:root {
+  color-scheme: dark;
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  color: #fff4dc;
+  background: #222b22;
+  accent-color: #edbf74;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; overflow: hidden; }
+button, input { font: inherit; }
+
+.floating-player {
+  min-height: 100vh;
+  display: grid;
+  align-content: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border: 1px solid #59634c;
+  background: linear-gradient(155deg, #303b2d, #222b22 65%);
+}
+
+.floating-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 30px 30px;
+  align-items: center;
+  gap: 6px;
+  -webkit-app-region: drag;
+  app-region: drag;
+  cursor: move;
+  user-select: none;
+}
+
+.floating-info { padding: 0 3px; }
+.floating-info h1, .floating-info p { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.floating-info h1 { font-family: Georgia, serif; font-size: 17px; font-weight: 400; }
+.floating-info p { margin-top: 3px; color: #c8cbbb; font-size: 11px; }
+.floating-info .floating-status { color: #f2c191; }
+
+.floating-player button {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.floating-player button:hover { background: #fff4dc17; }
+.floating-player :focus-visible { outline: 2px solid #edbf74; outline-offset: 2px; }
+.floating-player button:disabled { opacity: .45; cursor: default; }
+.floating-controls { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.floating-controls .floating-toggle { width: 42px; height: 42px; border-radius: 50%; color: #222b22; background: #edbf74; }
+.floating-controls .floating-toggle:hover { background: #f9d598; }
+.floating-skip { position: relative; }
+.floating-skip span { position: absolute; top: 11px; font-size: 9px; font-weight: 700; }
+
+.floating-timeline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  min-height: 26px;
+  color: #e0e0cd;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.floating-timeline input { width: 100%; margin: 0; cursor: pointer; }

@@ -1,0 +1,8 @@
+storeDir: .pnpm-store
+
+allowBuilds:
+  core-js: false
+  electron: true
+  electron-winstaller: false
+  es5-ext: false
+  tesseract.js: true

@@ -1,0 +1,90 @@
+{
+  "name": "lume-reader",
+  "version": "0.8.4",
+  "description": "Leitor desktop de PDF e EPUB, feito com Electron e React.",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "author": "Lume",
+  "scripts": {
+    "postinstall": "node node_modules/electron/install.js",
+    "dev": "node scripts/dev.mjs",
+    "start": "electron .",
+    "typecheck": "tsc --noEmit",
+    "transcription:prepare": "node scripts/prepare-transcription.mjs",
+    "build": "node scripts/prepare-pdfjs.mjs && node scripts/prepare-transcription.mjs && tsc --noEmit && vite build",
+    "test": "playwright test",
+    "package": "electron-builder --win dir --publish never",
+    "package:installer": "node scripts/package-release.mjs installer",
+    "package:mac": "node scripts/package-macos.mjs",
+    "package:store": "node scripts/package-release.mjs store",
+    "release:check": "node scripts/package-release.mjs check",
+    "release:prepare": "npm run build && node scripts/package-release.mjs release"
+  },
+  "build": {
+    "appId": "com.lume.reader",
+    "productName": "Lume",
+    "directories": {
+      "output": "release",
+      "buildResources": "resources/branding"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/ocr",
+        "to": "ocr"
+      },
+      {
+        "from": "resources/transcription",
+        "to": "transcription"
+      },
+      {
+        "from": "resources/branding/lume.ico",
+        "to": "lume.ico"
+      }
+    ],
+    "win": {
+      "target": "dir",
+      "icon": "resources/branding/lume.ico",
+      "signExecutable": false
+    },
+    "publish": null
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/yauzl": "^3.4.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "dompurify": "^3.4.17",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "epubjs": "^0.3.93",
+    "jszip": "^3.10.2",
+    "lucide-react": "^1.70.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.5.438",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  },
+  "dependencies": {
+    "@citation-js/core": "~0.7.21",
+    "@citation-js/plugin-bibtex": "~0.7.21",
+    "csv-parse": "^6.2.1",
+    "electron-updater": "^6.8.11",
+    "music-metadata": "^12.3.5",
+    "tesseract.js": "^7.0.0",
+    "yauzl": "^3.4.0",
+    "yazl": "^3.3.1"
+  }
+}

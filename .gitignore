@@ -1,0 +1,13 @@
+node_modules/
+.pnpm-store/
+dist/
+release/
+/desktop/public/pdfjs/
+/desktop/resources/transcription/runtime/
+/web/.next/
+/web/next-env.d.ts
+/web/*.tsbuildinfo
+test-results/
+playwright-report/
+.lume-test-data/
+*.log

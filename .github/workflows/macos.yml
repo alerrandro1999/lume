@@ -1,0 +1,89 @@
+name: Instalador macOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      distribution:
+        description: Prévia de teste ou distribuição assinada com Apple Developer ID
+        type: choice
+        options: [preview, signed]
+        default: preview
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+          - arch: x64
+            runner: macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: desktop
+        shell: bash
+    env:
+      MACOSX_DEPLOYMENT_TARGET: '15.0'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          architecture: ${{ matrix.arch }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+          run_install: false
+      - name: Conferir arquitetura do runner
+        run: node -e 'if(process.arch!==process.env.EXPECTED_ARCH)throw Error("Arquitetura inesperada")'
+        env:
+          EXPECTED_ARCH: ${{ matrix.arch }}
+      - name: Preparar ferramentas de compilação
+        run: |
+          command -v cmake >/dev/null || brew install cmake
+          xcrun --find swiftc
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+      - name: Compilar o hub e os componentes nativos
+        run: pnpm run build
+      - name: Verificar seleção de plataforma e configuração
+        run: pnpm test -- tests/platform-core.spec.ts
+      - name: Gerar prévia
+        if: inputs.distribution == 'preview'
+        run: pnpm run package:mac
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Gerar distribuição assinada e notarizada
+        if: inputs.distribution == 'signed'
+        run: pnpm run package:mac --signed
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      - name: Validar voz, transcrição e os nove aplicativos no pacote
+        run: node scripts/smoke-macos.mjs
+      - name: Disponibilizar instaladores e somas de verificação
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lume-mac-${{ matrix.arch }}-${{ inputs.distribution }}
+          path: |
+            desktop/release/macos/*.dmg
+            desktop/release/macos/*.zip
+            desktop/release/macos/*.sha256
+          if-no-files-found: error
+          retention-days: 14
