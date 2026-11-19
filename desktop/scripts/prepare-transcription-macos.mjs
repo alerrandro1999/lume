@@ -34,7 +34,7 @@ async function checkout(name, work) {
 }
 async function assertNative(executable) {
   const arch = process.arch === 'arm64' ? 'arm64' : 'x86_64';
-  await run('/usr/bin/lipo',['-verify_arch',arch,executable]);
+  await run('/usr/bin/lipo',[executable,'-verify_arch',arch]);
   const dependencies = await run('/usr/bin/otool',['-L',executable],root,true);
   for (const line of dependencies.split('\n').slice(1)) {
     const dependency = line.trim().split(' (')[0];

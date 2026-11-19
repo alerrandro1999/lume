@@ -9,7 +9,7 @@ const execute=promisify(execFile),expect=baseExpect.configure({timeout:30000});
 const folder=path.resolve('release/macos',process.arch==='arm64'?'mac-arm64':'mac','Lume.app');
 const executable=path.join(folder,'Contents/MacOS/Lume'),resources=path.join(folder,'Contents/Resources');
 await execute('/usr/bin/codesign',['--verify','--deep','--strict',folder]);
-await execute('/usr/bin/lipo',['-verify_arch',process.arch==='arm64'?'arm64':'x86_64',executable]);
+await execute('/usr/bin/lipo',[executable,'-verify_arch',process.arch==='arm64'?'arm64':'x86_64']);
 for(const file of ['ocr/por.traineddata','ocr/eng.traineddata','transcription/runtime/ggml-base-q5_1.bin','transcription/runtime/ggml-small-q5_1.bin'])expect((await stat(path.join(resources,file))).size).toBeGreaterThan(1000);
 const profile=await mkdtemp(path.join(os.tmpdir(),'lume-mac-smoke-')),env={...process.env,LUME_TEST_MODE:'1',LUME_USER_DATA:profile};
 delete env.ELECTRON_RUN_AS_NODE;delete env.LUME_DEV_URL;
